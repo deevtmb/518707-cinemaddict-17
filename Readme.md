@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Андрей Деев](https://up.htmlacademy.ru/ecmascript/17/user/518707).
-* Наставник: `Неизвестно`.
+* Наставник: [Михаил Кислый](https://htmlacademy.ru/profile/smart-grizzly).
 
 ---
 
