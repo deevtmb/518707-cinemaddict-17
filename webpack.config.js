@@ -12,6 +12,15 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [{ from: 'public' }],
-    }),
-  ]
+    })
+  ],
+  module: {
+    rules: [
+        {
+          test: /\.js$/,
+          exclude: /(node_modules)/,
+          use: ['babel-loader']
+        }
+    ]
+  }
 };
