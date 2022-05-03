@@ -1,6 +1,6 @@
 import {createElement} from '../render.js';
 import {getFormatedRuntime} from '../mock/utils.js';
-import { randomComments } from '../mock/comments.js';
+import CommentsModel from '../model/comments-model.js';
 import dayjs from 'dayjs';
 
 const createPopupTemplate = (film) => {
@@ -25,7 +25,7 @@ const createPopupTemplate = (film) => {
   const favoriteClassName = favorite ? 'film-details__control-button--active' : '';
 
   const commentsId = film.comments;
-  const filmComments = randomComments.filter((comment) => commentsId.includes(comment.id));
+  const filmComments = new CommentsModel().comments.filter((comment) => commentsId.includes(comment.id));
 
   return (
     `<section class="film-details">
@@ -155,19 +155,22 @@ const createPopupTemplate = (film) => {
 };
 
 export default class PopupView {
+  #element;
+  #film;
+
   constructor (film) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createPopupTemplate(this.film);
+  get #template() {
+    return createPopupTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.#template);
     }
 
-    return this.element;
+    return this.#element;
   }
 }

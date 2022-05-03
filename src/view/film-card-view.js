@@ -12,7 +12,6 @@ const createFilmCardTemplate = (film) => {
   const alreadyWatchedClassName = alreadyWatched ? 'film-card__controls-item--active' : '';
   const favoriteClassName = favorite ? 'film-card__controls-item--active' : '';
 
-
   return (
     `<article class="film-card">
       <a class="film-card__link">
@@ -37,19 +36,22 @@ const createFilmCardTemplate = (film) => {
 };
 
 export default class FilmCardView {
+  #element;
+  #film;
+
   constructor (film) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createFilmCardTemplate(this.film);
+  get #template() {
+    return createFilmCardTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.#template);
     }
 
-    return this.element;
+    return this.#element;
   }
 }
