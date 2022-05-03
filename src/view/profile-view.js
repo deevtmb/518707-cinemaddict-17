@@ -8,19 +8,22 @@ const createProfileTemplate = (rating) => (
 );
 
 export default class ProfileView {
+  #element;
+  #rating;
+
   constructor (rating) {
-    this.rating = rating;
+    this.#rating = rating;
   }
 
-  getTemplate() {
-    return createProfileTemplate(this.rating);
+  get #template() {
+    return createProfileTemplate(this.#rating);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.#template);
     }
 
-    return this.element;
+    return this.#element;
   }
 }

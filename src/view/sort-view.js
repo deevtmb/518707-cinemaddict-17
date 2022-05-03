@@ -9,15 +9,17 @@ const createSortTemplate = () => (
 );
 
 export default class SortView {
-  getTemplate() {
+  #element;
+
+  get #template() {
     return createSortTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.#template);
     }
 
-    return this.element;
+    return this.#element;
   }
 }

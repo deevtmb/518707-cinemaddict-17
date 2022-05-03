@@ -3,15 +3,17 @@ import {createElement} from '../render.js';
 const createFilmsListElement = () => ('<section class="films-list"></section>');
 
 export default class FilmsListView {
-  getTemplate() {
+  #element;
+
+  get #template() {
     return createFilmsListElement();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.#template);
     }
 
-    return this.element;
+    return this.#element;
   }
 }

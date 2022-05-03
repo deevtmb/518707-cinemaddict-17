@@ -1,5 +1,5 @@
 import { getRandomFloat, getRandomInteger, getRandomArrayElement, getChangedArray, getRandomDate } from './utils.js';
-import { randomComments } from './comments.js';
+import CommentsModel from '../model/comments-model.js';
 
 const FILMS = [
   {
@@ -78,12 +78,14 @@ const GENRES = [
 
 const TEXT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus';
 
+const comments = new CommentsModel().comments;
+
 export const generateFilm = () => {
-  const film = FILMS[getRandomInteger(0, FILMS.length - 1)];
+  const film = getRandomArrayElement(FILMS);
 
   return {
     id: 0,
-    comments: getChangedArray(randomComments.map((comment) => comment.id)),
+    comments: getChangedArray(comments.map((comment) => comment.id)),
     filmInfo: {
       title: film.title,
       alternativeTitle: film.title.split('').reverse().join(''),
