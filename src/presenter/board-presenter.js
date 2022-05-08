@@ -1,4 +1,4 @@
-import {render, createElement} from '../render.js';
+import {render, createElement} from '../framework/render.js';
 import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsView from '../view/films-view.js';
@@ -34,8 +34,7 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
-  #onLoadMoreButtonClick = (evt) => {
-    evt.preventDefault();
+  #onShowMoreButtonClick = () => {
     this.#films
       .slice(this.#renderedFilmsCount, this.#renderedFilmsCount + FILMS_PER_RENDER_AMOUNT)
       .forEach((film) => this.#renderFilmCard(film));
@@ -66,7 +65,7 @@ export default class BoardPresenter {
       }
       popupContainerElement.classList.add('hide-overflow');
       popupContainerElement.appendChild(popupComponent.element);
-      popupCloseButtonElement.addEventListener('click', closePopup);
+      popupComponent.setClosePopupButtonHandler(closePopup);
       document.addEventListener('keydown', onEscKeyDown);
     };
 
@@ -77,7 +76,7 @@ export default class BoardPresenter {
       document.removeEventListener('keydown', onEscKeyDown);
     }
 
-    filmComponent.element.querySelector('.film-card__link').addEventListener('click', openPopup);
+    filmComponent.setClickHandler(openPopup);
 
     render(filmComponent, this.#filmsListContainerElement);
   };
@@ -99,7 +98,7 @@ export default class BoardPresenter {
 
     if (this.#films.length > this.#renderedFilmsCount) {
       render(this.#showMoreButtonComponent, this.#filmsListComponent.element);
-      this.#showMoreButtonComponent.element.addEventListener('click', this.#onLoadMoreButtonClick);
+      this.#showMoreButtonComponent.setClickHandler(this.#onShowMoreButtonClick);
     }
   };
 }

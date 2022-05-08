@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {getFormatedRuntime} from '../mock/utils.js';
 import CommentsModel from '../model/comments-model.js';
 import dayjs from 'dayjs';
@@ -82,6 +82,7 @@ const createPopupTemplate = (film) => {
                   <td class="film-details__term">${genre.length > 1 ? 'Genres' : 'Genre'}</td>
                   <td class="film-details__cell">
                     ${genre.map((it) => `<span class="film-details__genre">${it}</span>`).join('')}
+                  </td>
                 </tr>
               </table>
 
@@ -154,23 +155,26 @@ const createPopupTemplate = (film) => {
   );
 };
 
-export default class PopupView {
-  #element;
-  #film;
+export default class PopupView extends AbstractView {
+  #film = null;
 
   constructor (film) {
+
+    super();
     this.#film = film;
   }
 
-  get #template() {
+  get template() {
     return createPopupTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.#template);
-    }
+  setClosePopupButtonHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closePopupButtonHandler);
+  };
 
-    return this.#element;
-  }
+  #closePopupButtonHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }
