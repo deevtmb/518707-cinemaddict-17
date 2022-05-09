@@ -46,6 +46,18 @@ export default class BoardPresenter {
     }
   };
 
+  #onFiltersClick = (evt) => {
+    const selectedFilter = document.querySelector('.main-navigation__item--active');
+
+    if (evt.target.tagName === 'SPAN') {
+      selectedFilter.classList.remove('main-navigation__item--active');
+      evt.target.parentElement.classList.add('main-navigation__item--active');
+    } else if (evt.target.tagName === 'A'){
+      selectedFilter.classList.remove('main-navigation__item--active');
+      evt.target.classList.add('main-navigation__item--active');
+    }
+  };
+
   #renderFilmCard = (film) => {
     const filmComponent = new FilmCardView(film);
     const popupComponent = new PopupView(film);
@@ -82,7 +94,9 @@ export default class BoardPresenter {
   };
 
   #renderBoard = () => {
-    render(new FilterView(), this.#boardContainer);
+    const filtersComponent = new FilterView(this.#films);
+    render(filtersComponent, this.#boardContainer);
+    filtersComponent.element.addEventListener('click', this.#onFiltersClick);
     render(new SortView(), this.#boardContainer);
     render(this.#filmsComponent, this.#boardContainer);
     render(this.#filmsListComponent, this.#filmsComponent.element);
