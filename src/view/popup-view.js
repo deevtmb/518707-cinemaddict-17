@@ -3,6 +3,8 @@ import {getFormatedRuntime} from '../mock/utils.js';
 import CommentsModel from '../model/comments-model.js';
 import dayjs from 'dayjs';
 
+const comments = new CommentsModel().comments;
+
 const createPopupTemplate = (film) => {
   const {
     ageRating,
@@ -25,7 +27,7 @@ const createPopupTemplate = (film) => {
   const favoriteClassName = favorite ? 'film-details__control-button--active' : '';
 
   const commentsId = film.comments;
-  const filmComments = new CommentsModel().comments.filter((comment) => commentsId.includes(comment.id));
+  const filmComments = comments.filter((comment) => commentsId.includes(comment.id));
 
   return (
     `<section class="film-details">
@@ -159,7 +161,6 @@ export default class PopupView extends AbstractView {
   #film = null;
 
   constructor (film) {
-
     super();
     this.#film = film;
   }
@@ -170,7 +171,41 @@ export default class PopupView extends AbstractView {
 
   setClosePopupButtonHandler = (callback) => {
     this._callback.click = callback;
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closePopupButtonHandler);
+    this.element.querySelector('.film-details__close-btn')
+      .addEventListener('click', this.#closePopupButtonHandler);
+  };
+
+  setWatchlistClickHandler = (callback) => {
+    this._callback.watchlistClick = callback;
+    this.element.querySelector('.film-details__control-button--watchlist')
+      .addEventListener('click', this.#watchlistClickHandler);
+  };
+
+  setHistoryClickHandler = (callback) => {
+    this._callback.historyClick = callback;
+    this.element.querySelector('.film-details__control-button--watched')
+      .addEventListener('click', this.#historyClickHandler);
+  };
+
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element.querySelector('.film-details__control-button--favorite')
+      .addEventListener('click', this.#favoriteClickHandler);
+  };
+
+  #watchlistClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+  };
+
+  #historyClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.historyClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   };
 
   #closePopupButtonHandler = (evt) => {
