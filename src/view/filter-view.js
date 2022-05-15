@@ -20,10 +20,22 @@ export default class FilterView extends AbstractView {
   constructor (films) {
     super();
     this.#films = films;
-
   }
 
   get template() {
     return createFilterTemplate(this.#films);
   }
+
+  setFilterChangeHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.main-navigation').addEventListener('click', this.#filterChangeHandler);
+  };
+
+  #filterChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'SPAN' || evt.target.tagName !== 'A') {
+      return;
+    }
+    evt.preventDefault();
+    this._callback.click();
+  };
 }
