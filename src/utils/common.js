@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
 
@@ -12,4 +14,8 @@ const updateItem = (items, update) => {
   ];
 };
 
-export {updateItem};
+const sortFilmsByRating = (filmA, filmB) => (filmB.filmInfo.totalRating - filmA.filmInfo.totalRating);
+
+const sortFilmsByDate = (filmA, filmB) => (dayjs(filmB.filmInfo.release.date).diff(dayjs(filmA.filmInfo.release.date)));
+
+export {updateItem, sortFilmsByDate, sortFilmsByRating};

@@ -1,10 +1,6 @@
 import PopupView from '../view/popup-view.js';
 import {render, remove} from '../framework/render.js';
-
-const State = {
-  HIDDEN: 'HIDDEN',
-  OPEN: 'OPEN'
-};
+import {PopupState} from '../utils/const.js';
 
 export default class PopupPresenter {
   #popupContainer = null;
@@ -13,7 +9,7 @@ export default class PopupPresenter {
   #changeData = null;
   #changeState = null;
 
-  #state = State.HIDDEN;
+  #state = PopupState.HIDDEN;
 
   constructor (popupContainer, changeData, changeState) {
     this.#popupContainer = popupContainer;
@@ -33,15 +29,15 @@ export default class PopupPresenter {
     this.#popupComponent.setClosePopupButtonHandler(this.closePopup);
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
-    if (this.#state === State.HIDDEN) {
+    if (this.#state === PopupState.HIDDEN) {
       this.#changeState();
       this.#popupContainer.classList.add('hide-overflow');
       render(this.#popupComponent, this.#popupContainer);
-      this.#state = State.OPEN;
+      this.#state = PopupState.OPEN;
       return;
     }
 
-    if (this.#state === State.OPEN) {
+    if (this.#state === PopupState.OPEN) {
       prevPopupComponent.element.querySelector('.film-details__top-container')
         .replaceChild(
           this.#popupComponent.element.querySelector('.film-details__controls'),
@@ -75,11 +71,11 @@ export default class PopupPresenter {
   };
 
   closePopup = () => {
-    if (this.#state !== State.HIDDEN) {
+    if (this.#state !== PopupState.HIDDEN) {
       this.#popupContainer.classList.remove('hide-overflow');
       remove(this.#popupComponent);
       document.removeEventListener('keydown', this.#escKeyDownHandler);
-      this.#state = State.HIDDEN;
+      this.#state = PopupState.HIDDEN;
     }
   };
 
