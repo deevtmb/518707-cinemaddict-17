@@ -112,12 +112,10 @@ export default class BoardPresenter {
     }
   };
 
-  #clearFilmsList = (isFilter = false) => {
+  #clearFilmsList = () => {
     this.#filmPresenter.forEach((presenter) => presenter.destroy());
     this.#filmPresenter.clear();
-    if (isFilter) {
-      this.#renderedFilmsCount = FILMS_PER_RENDER_AMOUNT;
-    }
+    this.#renderedFilmsCount = FILMS_PER_RENDER_AMOUNT;
     remove(this.#showMoreButtonComponent);
   };
 
