@@ -2,6 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import {getFormatedRuntime} from '../mock/utils.js';
 import CommentsModel from '../model/comments-model.js';
 import dayjs from 'dayjs';
+import { EMOTIONS } from '../utils/const';
 
 const comments = new CommentsModel().comments;
 
@@ -122,32 +123,19 @@ const createPopupTemplate = (film) => {
             </ul>
 
             <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
+              <div class="film-details__add-emoji-label">
+                <img class="visually-hidden" src="" width="55" height="55">
+              </div>
 
               <label class="film-details__comment-label">
                 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
               </label>
 
               <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-                <label class="film-details__emoji-label" for="emoji-puke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
+                ${EMOTIONS.map((emoji) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}">
+                  <label class="film-details__emoji-label" for="emoji-${emoji}">
+                    <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji-${emoji}">
+                  </label>`).join('')}
               </div>
             </div>
           </section>
@@ -159,14 +147,20 @@ const createPopupTemplate = (film) => {
 
 export default class PopupView extends AbstractView {
   #film = null;
+  #scrolTopValue = 0;
 
   constructor (film) {
     super();
     this.#film = film;
+    this.#setInnerHandlers();
   }
 
   get template() {
     return createPopupTemplate(this.#film);
+  }
+
+  get scrollTopValue () {
+    return this.#scrolTopValue;
   }
 
   setClosePopupButtonHandler = (callback) => {
@@ -211,5 +205,25 @@ export default class PopupView extends AbstractView {
   #closePopupButtonHandler = (evt) => {
     evt.preventDefault();
     this._callback.click();
+  };
+
+  #emojiChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'LABEL' && evt.target.tagName !== 'IMG') {
+      return;
+    }
+
+    const commentEmoji = this.element.querySelector('.film-details__add-emoji-label img');
+    commentEmoji.src = evt.target.tagName === 'IMG' ? evt.target.src : evt.target.firstElementChild.src;
+    commentEmoji.alt = evt.target.tagName === 'IMG' ? evt.target.alt : evt.target.firstElementChild.alt;
+    commentEmoji.classList.remove('visually-hidden');
+  };
+
+  #scrollPopupHandler = () => {
+    this.#scrolTopValue = +this.element.scrollTop.toFixed();
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiChangeHandler);
+    this.element.addEventListener('scroll', this.#scrollPopupHandler);
   };
 }

@@ -1,3 +1,5 @@
+const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
+
 const SortType = {
   DEFAULT: 'default',
   DATE: 'date',
@@ -9,4 +11,4 @@ const PopupState = {
   OPEN: 'OPEN'
 };
 
-export {SortType, PopupState};
+export {SortType, PopupState, EMOTIONS};
