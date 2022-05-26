@@ -7,22 +7,25 @@ export default class PopupPresenter {
   #popupComponent = null;
   #film = null;
   #changeData = null;
-  #changeState = null;
-
   #state = PopupState.HIDDEN;
+  #filmId = null;
 
-  constructor (popupContainer, changeData, changeState) {
+  constructor (popupContainer, changeData) {
     this.#popupContainer = popupContainer;
     this.#changeData = changeData;
-    this.#changeState = changeState;
   }
 
   get state () {
     return this.#state;
   }
 
+  get filmId () {
+    return this.#filmId;
+  }
+
   init = (film) => {
     this.#film = film;
+    this.#filmId = film.id;
 
     const prevPopupComponent = this.#popupComponent;
     this.#popupComponent = new PopupView(this.#film);
@@ -34,7 +37,6 @@ export default class PopupPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
     if (this.#state === PopupState.HIDDEN) {
-      this.#changeState();
       this.#popupContainer.classList.add('hide-overflow');
       render(this.#popupComponent, this.#popupContainer);
       this.#state = PopupState.OPEN;

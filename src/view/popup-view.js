@@ -1,8 +1,10 @@
+import {EMOTIONS, DateFormat} from '../utils/const.js';
+import {getFormatedDate, getFormatedRuntime} from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
-import {getFormatedRuntime} from '../mock/utils.js';
 import CommentsModel from '../model/comments-model.js';
 import dayjs from 'dayjs';
-import { EMOTIONS } from '../utils/const';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 const comments = new CommentsModel().comments;
 
@@ -71,7 +73,7 @@ const createPopupTemplate = (film) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${dayjs(release.date).format('DD MMMM YYYY')}</td>
+                  <td class="film-details__cell">${getFormatedDate(release.date, DateFormat.POPUP_RELEASE_DATE)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
@@ -115,7 +117,7 @@ const createPopupTemplate = (film) => {
                     <p class="film-details__comment-text">${filmComment.comment}</p>
                     <p class="film-details__comment-info">
                       <span class="film-details__comment-author">${filmComment.author}</span>
-                      <span class="film-details__comment-day">${dayjs(filmComment.date).format('YYYY/MM/DD HH:mm')}</span>
+                      <span class="film-details__comment-day">${dayjs().to(filmComment.date)}</span>
                       <button class="film-details__comment-delete">Delete</button>
                     </p>
                   </div>

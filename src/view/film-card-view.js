@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {getFormatedRuntime, getDescriptionPreview} from '../mock/utils.js';
-import dayjs from 'dayjs';
+import {getFormatedRuntime, getDescriptionPreview, getFormatedDate} from '../utils/common.js';
+import {DateFormat} from '../utils/const.js';
 
 const createFilmCardTemplate = (film) => {
   const {poster, title, totalRating, genre, runtime, release, description} = film.filmInfo;
@@ -18,7 +18,7 @@ const createFilmCardTemplate = (film) => {
         <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${dayjs(release.date).format('YYYY')}</span>
+          <span class="film-card__year">${getFormatedDate(release.date, DateFormat.FILM_CARD_RELEASE_DATE)}</span>
           <span class="film-card__duration">${getFormatedRuntime(runtime)}</span>
           <span class="film-card__genre">${genre[0]}</span>
         </p>
