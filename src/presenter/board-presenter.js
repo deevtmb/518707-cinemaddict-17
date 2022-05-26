@@ -1,5 +1,6 @@
-import {render, remove, createElement} from '../framework/render.js';
+import {RenderPosition ,render, remove, createElement} from '../framework/render.js';
 import {updateItem, sortFilmsByRating, sortFilmsByDate} from '../utils/common.js';
+import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsView from '../view/films-view.js';
 import FilmsListView from '../view/films-list-view.js';
@@ -7,7 +8,7 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import NoFilmsView from '../view/no-films-view.js';
 import FilmPresenter from './film-presenter.js';
 import PopupPresenter from './popup-presenter.js';
-import {SortType, PopupState} from '../utils/const.js';
+import {FilterType, SortType} from '../utils/const.js';
 
 const FILMS_PER_RENDER_AMOUNT = 5;
 
@@ -15,23 +16,27 @@ export default class BoardPresenter {
   #boardContainer = null;
   #filmsModel = null;
 
+  #filterComponent = null;
   #sortComponent = new SortView();
   #filmsComponent = new FilmsView();
   #filmsListComponent = new FilmsListView();
   #noFilmsComponent = new NoFilmsView();
   #showMoreButtonComponent = new ShowMoreButtonView();
+  #popupContainer = document.querySelector('body');
 
   #films = [];
   #sourcedFilms = [];
   #renderedFilmsCount = FILMS_PER_RENDER_AMOUNT;
   #currentSortType = SortType.DEFAULT;
-  #popupPresenter = new Map();
+  #currentFilterType = FilterType.ALL;
+  #popupPresenter = null;
   #filmPresenter = new Map();
   #filmsListContainerElement = createElement('<div class="films-list__container"></div>');
 
   constructor (boardContainer, filmsModel) {
     this.#boardContainer = boardContainer;
     this.#filmsModel = filmsModel;
+    this.#popupPresenter = new PopupPresenter(this.#popupContainer, this.#onFilmChange);
   }
 
   init = () => {
@@ -43,9 +48,18 @@ export default class BoardPresenter {
   #onFilmChange = (updatedFilm) => {
     this.#sourcedFilms = updateItem(this.#sourcedFilms, updatedFilm);
     this.#films = updateItem(this.#films, updatedFilm);
-    this.#filmPresenter.get(updatedFilm.id).init(updatedFilm);
-    if (this.#popupPresenter.get(updatedFilm.id).state !== PopupState.HIDDEN) {
-      this.#popupPresenter.get(updatedFilm.id).init(updatedFilm);
+    this.#renderFilter(this.#sourcedFilms);
+
+    if (document.querySelector('.film-details') && this.#popupPresenter.filmId === updatedFilm.id) {
+      this.#popupPresenter.init(updatedFilm);
+    }
+
+    if (this.#currentFilterType !== FilterType.ALL) {
+      this.#onFilterTypeChange(this.#currentFilterType);
+      return;
+    }
+    if (this.#filmPresenter.get(updatedFilm.id)) {
+      this.#filmPresenter.get(updatedFilm.id).init(updatedFilm);
     }
   };
 
@@ -56,6 +70,44 @@ export default class BoardPresenter {
     if (this.#films.length <= this.#renderedFilmsCount) {
       remove(this.#showMoreButtonComponent);
     }
+  };
+
+  #filterFilms = (filterType) => {
+    this.#films = [...this.#sourcedFilms];
+    this.#currentFilterType = filterType;
+
+    switch (filterType) {
+      case FilterType.WATCHLIST:
+        return this.#films.filter((film) => film.userDetails.watchlist);
+      case FilterType.HISTORY:
+        return this.#films.filter((film) => film.userDetails.alreadyWatched);
+      case FilterType.FAVORITES:
+        return this.#films.filter((film) => film.userDetails.favorite);
+      default:
+        return [...this.#sourcedFilms];
+    }
+  };
+
+  #onFilterTypeChange = (filterType) => {
+    this.#films = this.#filterFilms(filterType);
+    this.#filterComponent.element.querySelector('.main-navigation__item--active').classList.remove('main-navigation__item--active');
+    this.#filterComponent.element.querySelector(`a[data-filter-type=${filterType}]`).classList.add('main-navigation__item--active');
+
+    if (this.#currentSortType !== SortType.DEFAULT) {
+      this.#sortFilms(this.#currentSortType);
+    }
+
+    this.#clearFilmsList();
+    this.#renderFilmsList();
+  };
+
+  #renderFilter = (films) => {
+    if (this.#filterComponent) {
+      remove(this.#filterComponent);
+    }
+    this.#filterComponent = new FilterView(films);
+    render(this.#filterComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+    this.#filterComponent.setFilterChangeHandler(this.#onFilterTypeChange);
   };
 
   #sortFilms = (sortType) => {
@@ -86,17 +138,10 @@ export default class BoardPresenter {
     this.#sortComponent.setSortTypeChangeHandler(this.#onSortTypeChange);
   };
 
-  #onChangeState = () => {
-    this.#popupPresenter.forEach((presenter) => presenter.closePopup());
-  };
-
   #renderFilmCard = (film) => {
-    const popupPresenter = new PopupPresenter(document.querySelector('body'), this.#onFilmChange, this.#onChangeState);
-    const filmPresenter = new FilmPresenter(this.#filmsListContainerElement, this.#onFilmChange, () => popupPresenter.init(film));
-
+    const filmPresenter = new FilmPresenter(this.#filmsListContainerElement, this.#onFilmChange, () => this.#popupPresenter.init(film));
     filmPresenter.init(film);
     this.#filmPresenter.set(film.id, filmPresenter);
-    this.#popupPresenter.set(film.id, popupPresenter);
   };
 
   #renderFilms = (from, to) => {
@@ -129,6 +174,8 @@ export default class BoardPresenter {
   };
 
   #renderBoard = () => {
+    this.#renderFilter(this.#sourcedFilms);
+
     if (this.#films.length){
       this.#renderSort();
     }

@@ -24,24 +24,7 @@ const getChangedArray = (array) => {
 
 const getRandomArrayElement = (array) => array[getRandomInteger(0, array.length - 1)];
 
-const getFormatedRuntime = (runtime) => {
-  const runtimeHours = Math.floor(runtime / 60);
-  const runtimeMinutes = runtime % 60;
-
-  if (runtimeHours) {
-    return `${runtimeHours}h ${runtimeMinutes}m`;
-  }
-
-  return `${runtimeMinutes}m`;
-};
-
-const getDescriptionPreview = (descriprion, maxSymbols = 140, lastSymbol = '...') => (
-  descriprion.length > maxSymbols
-    ? `${descriprion.substring(0, 139)}${lastSymbol}`
-    : descriprion
-);
-
 const getRandomDate = (startDate, endDate) => new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
 
 
-export {getRandomInteger, getRandomFloat, getChangedArray, getRandomArrayElement, getFormatedRuntime, getDescriptionPreview, getRandomDate};
+export {getRandomInteger, getRandomFloat, getChangedArray, getRandomArrayElement, getRandomDate};
