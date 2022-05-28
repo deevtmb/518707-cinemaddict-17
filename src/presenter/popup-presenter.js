@@ -1,6 +1,6 @@
-import PopupView from '../view/popup-view.js';
 import {render, remove, replace} from '../framework/render.js';
-import {PopupState} from '../utils/const.js';
+import {PopupState, UpdateType} from '../utils/const.js';
+import PopupView from '../view/popup-view.js';
 
 export default class PopupPresenter {
   #popupContainer = null;
@@ -56,17 +56,17 @@ export default class PopupPresenter {
 
   #onWatchlistClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#changeData(this.#film);
+    this.#changeData(UpdateType.MINOR, this.#film);
   };
 
   #onHistoryClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#changeData(this.#film);
+    this.#changeData(UpdateType.MINOR, this.#film);
   };
 
   #onFavoriteClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#changeData(this.#film);
+    this.#changeData(UpdateType.MINOR, this.#film);
   };
 
   closePopup = () => {

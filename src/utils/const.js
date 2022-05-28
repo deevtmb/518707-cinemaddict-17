@@ -23,4 +23,10 @@ const DateFormat = {
   FILM_CARD_RELEASE_DATE: 'YYYY'
 };
 
-export {SortType, FilterType, PopupState, DateFormat, EMOTIONS};
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export {SortType, FilterType, PopupState, DateFormat, UpdateType, EMOTIONS};
