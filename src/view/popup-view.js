@@ -2,6 +2,7 @@ import {EMOTIONS, DateFormat} from '../utils/const.js';
 import {getFormatedDate, getFormatedRuntime} from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
+import he from 'he';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
@@ -106,7 +107,7 @@ const createPopupTemplate = (film, comments) => {
                     <img src="./images/emoji/${filmComment.emotion}.png" width="55" height="55" alt="emoji-${filmComment.emotion}">
                   </span>
                   <div>
-                    <p class="film-details__comment-text">${filmComment.comment}</p>
+                    <p class="film-details__comment-text">${he.encode(filmComment.comment)}</p>
                     <p class="film-details__comment-info">
                       <span class="film-details__comment-author">${filmComment.author}</span>
                       <span class="film-details__comment-day">${dayjs().to(filmComment.date)}</span>

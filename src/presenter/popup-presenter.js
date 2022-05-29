@@ -66,22 +66,27 @@ export default class PopupPresenter {
   };
 
   #addComment = (evt) => {
+    const commentText = this.#popupComponent.element.querySelector('textarea');
+    const commentEmoji = this.#popupComponent.element.querySelector('.film-details__emoji-item:checked');
     if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
       evt.preventDefault();
-      this.#changeData(
-        UserAction.ADD_COMMENT,
-        UpdateType.PATCH,
-        {
-          film: this.#film,
-          comment: {
-            id: -1,
-            author: 'Author',
-            comment: this.#popupComponent.element.querySelector('textarea').value,
-            date: new Date(),
-            emotion: this.#popupComponent.element.querySelector('.film-details__emoji-item:checked').value,
+
+      if (commentText.value && commentEmoji.value) {
+        this.#changeData(
+          UserAction.ADD_COMMENT,
+          UpdateType.PATCH,
+          {
+            film: this.#film,
+            comment: {
+              id: -1,
+              author: 'Author',
+              comment: commentText.value,
+              date: new Date(),
+              emotion: commentEmoji.value,
+            }
           }
-        }
-      );
+        );
+      }
     }
   };
 

@@ -7,7 +7,7 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import NoFilmsView from '../view/no-films-view.js';
 import FilmPresenter from './film-presenter.js';
 import PopupPresenter from './popup-presenter.js';
-import {SortType, UpdateType, PopupState, UserAction} from '../utils/const.js';
+import {SortType, UpdateType, PopupState, UserAction, FilterType} from '../utils/const.js';
 import {filter} from '../utils/filter.js';
 
 const FILMS_PER_RENDER_AMOUNT = 5;
@@ -20,13 +20,14 @@ export default class BoardPresenter {
 
   #sortComponent = null;
   #showMoreButtonComponent = null;
+  #noFilmsComponent = null;
   #filmsComponent = new FilmsView();
   #filmsListComponent = new FilmsListView();
-  #noFilmsComponent = new NoFilmsView();
   #popupContainer = document.querySelector('body');
 
   #renderedFilmsCount = FILMS_PER_RENDER_AMOUNT;
   #currentSortType = SortType.DEFAULT;
+  #currentFilterType = FilterType.ALL;
   #popupPresenter = null;
   #filmPresenter = new Map();
   #filmsListContainerElement = this.#filmsListComponent.element.querySelector('.films-list__container');
@@ -45,9 +46,9 @@ export default class BoardPresenter {
   }
 
   get films () {
-    const currentFilterType = this.#filterModel.filter;
+    this.#currentFilterType = this.#filterModel.filter;
     const films = this.#filmsModel.films;
-    const filteredFilms = filter[currentFilterType](films);
+    const filteredFilms = filter[this.#currentFilterType](films);
 
     switch (this.#currentSortType) {
       case SortType.RATING:
@@ -144,6 +145,7 @@ export default class BoardPresenter {
   };
 
   #renderNoFilms = () => {
+    this.#noFilmsComponent = new NoFilmsView(this.#currentFilterType);
     render(this.#noFilmsComponent, this.#filmsListComponent.element);
   };
 
@@ -181,7 +183,9 @@ export default class BoardPresenter {
 
     remove(this.#sortComponent);
     remove(this.#showMoreButtonComponent);
-    remove(this.#noFilmsComponent);
+    if (this.#noFilmsComponent) {
+      remove(this.#noFilmsComponent);
+    }
 
     if (resetRenderedFilmsCount) {
       this.#renderedFilmsCount = FILMS_PER_RENDER_AMOUNT;
