@@ -1,14 +1,11 @@
 import {EMOTIONS, DateFormat} from '../utils/const.js';
 import {getFormatedDate, getFormatedRuntime} from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
-import CommentsModel from '../model/comments-model.js';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
-const comments = new CommentsModel().comments;
-
-const createPopupTemplate = (film) => {
+const createPopupTemplate = (film, comments) => {
   const {
     ageRating,
     poster,
@@ -25,12 +22,7 @@ const createPopupTemplate = (film) => {
   } = film.filmInfo;
   const {watchlist, alreadyWatched, favorite} = film.userDetails;
 
-  const watchlistClassName = watchlist ? 'film-details__control-button--active' : '';
-  const alreadyWatchedClassName = alreadyWatched ? 'film-details__control-button--active' : '';
-  const favoriteClassName = favorite ? 'film-details__control-button--active' : '';
-
-  const commentsId = film.comments;
-  const filmComments = comments.filter((comment) => commentsId.includes(comment.id));
+  const filmComments = comments.filter((comment) => film.comments.includes(comment.id));
 
   return (
     `<section class="film-details">
@@ -98,9 +90,9 @@ const createPopupTemplate = (film) => {
           </div>
 
           <section class="film-details__controls">
-            <button type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlistClassName}" id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatchedClassName}" id="watched" name="watched">Already watched</button>
-            <button type="button" class="film-details__control-button film-details__control-button--favorite ${favoriteClassName}" id="favorite" name="favorite">Add to favorites</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist ? 'film-details__control-button--active' : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatched ? 'film-details__control-button--active' : ''}" id="watched" name="watched">Already watched</button>
+            <button type="button" class="film-details__control-button film-details__control-button--favorite ${favorite ? 'film-details__control-button--active' : ''}" id="favorite" name="favorite">Add to favorites</button>
           </section>
         </div>
 
@@ -149,16 +141,18 @@ const createPopupTemplate = (film) => {
 
 export default class PopupView extends AbstractView {
   #film = null;
+  #comments = null;
   #scrolTopValue = 0;
 
-  constructor (film) {
+  constructor (film, comments) {
     super();
     this.#film = film;
+    this.#comments = comments;
     this.#setInnerHandlers();
   }
 
   get template() {
-    return createPopupTemplate(this.#film);
+    return createPopupTemplate(this.#film, this.#comments);
   }
 
   get scrollTopValue () {
@@ -187,6 +181,20 @@ export default class PopupView extends AbstractView {
     this._callback.favoriteClick = callback;
     this.element.querySelector('.film-details__control-button--favorite')
       .addEventListener('click', this.#favoriteClickHandler);
+  };
+
+  setDeleteCommentButtonHandler = (callback) => {
+    this._callback.deleteComment = callback;
+    this.element.querySelector('.film-details__comments-list')
+      .addEventListener('click', this.#deleteCommentButtonHandler);
+  };
+
+  #deleteCommentButtonHandler = (evt) => {
+    if (evt.target.tagName !== 'BUTTON') {
+      return;
+    }
+    evt.preventDefault();
+    this._callback.deleteComment(evt.target);
   };
 
   #watchlistClickHandler = (evt) => {

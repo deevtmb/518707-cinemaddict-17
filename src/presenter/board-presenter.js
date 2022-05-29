@@ -7,7 +7,7 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import NoFilmsView from '../view/no-films-view.js';
 import FilmPresenter from './film-presenter.js';
 import PopupPresenter from './popup-presenter.js';
-import {SortType, UpdateType, PopupState} from '../utils/const.js';
+import {SortType, UpdateType, PopupState, UserAction} from '../utils/const.js';
 import {filter} from '../utils/filter.js';
 
 const FILMS_PER_RENDER_AMOUNT = 5;
@@ -16,6 +16,7 @@ export default class BoardPresenter {
   #boardContainer = null;
   #filmsModel = null;
   #filterModel = null;
+  #commentsModel = null;
 
   #sortComponent = null;
   #showMoreButtonComponent = null;
@@ -30,15 +31,17 @@ export default class BoardPresenter {
   #filmPresenter = new Map();
   #filmsListContainerElement = this.#filmsListComponent.element.querySelector('.films-list__container');
 
-  constructor (boardContainer, filmsModel, filterModel) {
+  constructor (boardContainer, filmsModel, filterModel, commentsModel) {
     this.#boardContainer = boardContainer;
     this.#filmsModel = filmsModel;
     this.#filterModel = filterModel;
+    this.#commentsModel = commentsModel;
 
-    this.#popupPresenter = new PopupPresenter(this.#popupContainer, this.#handleViewAction);
+    this.#popupPresenter = new PopupPresenter(this.#popupContainer, this.#handleViewAction, this.#commentsModel);
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
+    this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
   get films () {
@@ -59,8 +62,17 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
-  #handleViewAction = (updateType, update) => {
-    this.#filmsModel.updateFilm(updateType, update);
+  #handleViewAction = (userAction, updateType, update) => {
+    switch (userAction) {
+      case UserAction.UPDATE_FILM:
+        this.#filmsModel.updateFilm(updateType, update);
+        break;
+      case UserAction.DELETE_COMMENT:
+        this.#filmsModel.updateFilm(updateType, update);
+        break;
+      case UserAction.ADD_COMMENT:
+        this.#commentsModel.addComment(updateType, update);
+    }
   };
 
   #handleModelEvent = (updateType, data) => {

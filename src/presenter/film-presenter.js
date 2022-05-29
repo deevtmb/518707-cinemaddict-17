@@ -1,5 +1,5 @@
 import {render, replace, remove} from '../framework/render.js';
-import {UpdateType} from '../utils/const.js';
+import {UpdateType, UserAction} from '../utils/const.js';
 import FilmCardView from '../view/film-card-view.js';
 
 export default class FilmPresenter {
@@ -39,17 +39,29 @@ export default class FilmPresenter {
 
   #onWatchlistClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#changeData(UpdateType.MINOR, this.#film);
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      this.#film
+    );
   };
 
   #onHistoryClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#changeData(UpdateType.MINOR, this.#film);
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      this.#film
+    );
   };
 
   #onFavoriteClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#changeData(UpdateType.MINOR, this.#film);
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      this.#film
+    );
   };
 
   destroy = () => {
