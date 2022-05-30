@@ -35,4 +35,9 @@ const UserAction = {
   DELETE_COMMENT: 'DELETE_COMMENT',
 };
 
-export {SortType, FilterType, PopupState, DateFormat, UpdateType, UserAction, EMOTIONS};
+const ExtraFilmTitle = {
+  TOP_RATED: 'Top rated',
+  MOST_COMMENTED: 'Most commented'
+};
+
+export {SortType, FilterType, PopupState, DateFormat, UpdateType, UserAction, ExtraFilmTitle, EMOTIONS};

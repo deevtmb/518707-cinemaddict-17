@@ -23,5 +23,6 @@ const getFormatedDate = (date, format) => dayjs(date).format(format);
 
 const sortFilmsByRating = (filmA, filmB) => (filmB.filmInfo.totalRating - filmA.filmInfo.totalRating);
 const sortFilmsByDate = (filmA, filmB) => (dayjs(filmB.filmInfo.release.date).diff(dayjs(filmA.filmInfo.release.date)));
+const sortFilmsByCommentsAmount = (filmA, filmB) => (filmB.comments.length - filmA.comments.length);
 
-export {sortFilmsByDate, sortFilmsByRating, getFormatedRuntime, getFormatedDate, getDescriptionPreview};
+export {sortFilmsByDate, sortFilmsByRating, sortFilmsByCommentsAmount, getFormatedRuntime, getFormatedDate, getDescriptionPreview};
