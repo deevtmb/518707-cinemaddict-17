@@ -1,14 +1,15 @@
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortFilmsByRating, sortFilmsByDate, sortFilmsByCommentsAmount} from '../utils/common.js';
+import {SortType, UpdateType, PopupState, UserAction, FilterType, ExtraFilmTitle} from '../utils/const.js';
+import {filter} from '../utils/filter.js';
 import SortView from '../view/sort-view.js';
 import FilmsView from '../view/films-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import NoFilmsView from '../view/no-films-view.js';
+import ProfileView from '../view/profile-view.js';
 import FilmPresenter from './film-presenter.js';
 import PopupPresenter from './popup-presenter.js';
-import {SortType, UpdateType, PopupState, UserAction, FilterType, ExtraFilmTitle} from '../utils/const.js';
-import {filter} from '../utils/filter.js';
 
 const FILMS_PER_RENDER_AMOUNT = 5;
 const FILMS_LIST_EXTRA_AMOUNT = 2;
@@ -19,6 +20,7 @@ export default class BoardPresenter {
   #filterModel = null;
   #commentsModel = null;
 
+  #profileComponent = null;
   #sortComponent = null;
   #showMoreButtonComponent = null;
   #noFilmsComponent = null;
@@ -30,6 +32,7 @@ export default class BoardPresenter {
   #topCommentedFilmsListComponent = new FilmsListView(this.#isExtraFilmsList, ExtraFilmTitle.MOST_COMMENTED);
 
   #popupContainer = document.querySelector('body');
+  #profileContainer = document.querySelector('.header');
 
   #renderedFilmsCount = FILMS_PER_RENDER_AMOUNT;
   #currentSortType = SortType.DEFAULT;
@@ -71,6 +74,7 @@ export default class BoardPresenter {
   }
 
   init = () => {
+    this.#renderProfile();
     this.#renderMainBoard();
     this.#renderExtraFilms();
   };
@@ -91,14 +95,17 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
+        this.#renderProfile();
         this.#updateFilmData(data);
         break;
       case UpdateType.MINOR:
+        this.#renderProfile();
         this.#clearMainBoard();
         this.#renderMainBoard();
         this.#updateFilmData(data);
         break;
       case UpdateType.MAJOR:
+        this.#renderProfile();
         this.#clearMainBoard({resetRenderedFilmsCount: true});
         this.#renderMainBoard();
         break;
@@ -116,6 +123,14 @@ export default class BoardPresenter {
     if (filmsAmount <= this.#renderedFilmsCount) {
       remove(this.#showMoreButtonComponent);
     }
+  };
+
+  #renderProfile = () => {
+    if (this.#profileComponent) {
+      remove(this.#profileComponent);
+    }
+    this.#profileComponent = new ProfileView(this.films);
+    render(this.#profileComponent, this.#profileContainer);
   };
 
   #updateFilmData = (film) => {

@@ -8,6 +8,7 @@ export default class PopupPresenter {
 
   #film = null;
   #filmId = null;
+  #prevFilmId = null;
   #comments = null;
   #commentsModel = null;
   #changeData = null;
@@ -28,6 +29,10 @@ export default class PopupPresenter {
   }
 
   init = (film) => {
+    if (this.#film) {
+      this.#prevFilmId = this.#film.id;
+    }
+
     this.#film = film;
     this.#filmId = film.id;
     this.#comments = this.#commentsModel.comments;
@@ -51,7 +56,10 @@ export default class PopupPresenter {
     }
 
     replace(this.#popupComponent, prevPopupComponent);
-    this.#popupComponent.element.scrollTop = prevPopupComponent.scrollTopValue;
+
+    if (this.#prevFilmId === this.#film.id) {
+      this.#popupComponent.element.scrollTop = prevPopupComponent.scrollTopValue;
+    }
   };
 
   #deleteComment = (target) => {
@@ -71,7 +79,7 @@ export default class PopupPresenter {
     if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
       evt.preventDefault();
 
-      if (commentText.value && commentEmoji.value) {
+      if (commentText.value && commentEmoji) {
         this.#changeData(
           UserAction.ADD_COMMENT,
           UpdateType.PATCH,
