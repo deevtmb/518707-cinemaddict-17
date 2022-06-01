@@ -1,30 +1,41 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {getFilteredFilms} from '../mock/filters.js';
 import {FilterType} from '../utils/const.js';
 
-const createFilterTemplate = (films) => {
-  const filteredFilms = getFilteredFilms(films);
+const createFilterItemTemplate = (filter, currentFilterType) => {
+  const {type, name, count} = filter;
+
+  return (
+    `<a href="#${type}"
+    class="main-navigation__item
+    ${type === currentFilterType ? 'main-navigation__item--active' : ''}"
+    data-filter-type="${type}">
+    ${name}
+    ${type !== FilterType.ALL ? `<span class="main-navigation__item-count">${count}</span>` : ''}</a>`
+  );
+};
+
+const createFilterTemplate = (filters, currentFilterType) => {
+  const filtersItemsTemplate = filters.map((filter) => createFilterItemTemplate(filter, currentFilterType)).join('');
 
   return (
     `<nav class="main-navigation">
-      <a href="#all" class="main-navigation__item main-navigation__item--active" data-filter-type="${FilterType.ALL}">All movies</a>
-      <a href="#watchlist" class="main-navigation__item" data-filter-type="${FilterType.WATCHLIST}">Watchlist <span class="main-navigation__item-count">${filteredFilms.watchlist.length}</span></a>
-      <a href="#history" class="main-navigation__item" data-filter-type="${FilterType.HISTORY}">History <span class="main-navigation__item-count">${filteredFilms.history.length}</span></a>
-      <a href="#favorites" class="main-navigation__item" data-filter-type="${FilterType.FAVORITES}">Favorites <span class="main-navigation__item-count">${filteredFilms.favorite.length}</span></a>
+      ${filtersItemsTemplate}
     </nav>`
   );
 };
 
 export default class FilterView extends AbstractView {
-  #films = null;
+  #filters = null;
+  #currentFilterType = null;
 
-  constructor (films) {
+  constructor (filters, currentFilterType) {
     super();
-    this.#films = films;
+    this.#filters = filters;
+    this.#currentFilterType = currentFilterType;
   }
 
   get template() {
-    return createFilterTemplate(this.#films);
+    return createFilterTemplate(this.#filters, this.#currentFilterType);
   }
 
   setFilterChangeHandler = (callback) => {

@@ -16,7 +16,8 @@
     "start": "webpack serve --mode development --open"
   },
   "dependencies": {
-    "dayjs": "^1.11.1"
+    "dayjs": "^1.11.1",
+    "he": "1.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.17.9",

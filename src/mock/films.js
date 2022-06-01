@@ -85,7 +85,7 @@ export const generateFilm = () => {
 
   return {
     id: 0,
-    comments: getChangedArray(comments.map((comment) => comment.id)),
+    comments: getChangedArray(comments.map((comment) => comment.id)).sort((a, b) => a - b),
     filmInfo: {
       title: film.title,
       alternativeTitle: film.title.split('').reverse().join(''),

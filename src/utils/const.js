@@ -23,4 +23,21 @@ const DateFormat = {
   FILM_CARD_RELEASE_DATE: 'YYYY'
 };
 
-export {SortType, FilterType, PopupState, DateFormat, EMOTIONS};
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const UserAction = {
+  UPDATE_FILM: 'UPDATE_FILM',
+  ADD_COMMENT: 'ADD_COMMENT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+};
+
+const ExtraFilmTitle = {
+  TOP_RATED: 'Top rated',
+  MOST_COMMENTED: 'Most commented'
+};
+
+export {SortType, FilterType, PopupState, DateFormat, UpdateType, UserAction, ExtraFilmTitle, EMOTIONS};

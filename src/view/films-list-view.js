@@ -1,9 +1,23 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilmsListElement = () => ('<section class="films-list"></section>');
+const createFilmsListElement = (isExtraFilmsList = false, filmsListTitle = '') => (
+  `<section class="films-list ${isExtraFilmsList ? 'films-list--extra' : ''}">
+    ${isExtraFilmsList ? `<h2 class="films-list__title">${filmsListTitle}</h2>` : ''}
+    <div class="films-list__container"></div>
+  </section>`
+);
 
 export default class FilmsListView extends AbstractView {
+  #isExtraFilmsList = false;
+  #filmsListTitle = '';
+
+  constructor (isExtraFilmsList, filmsListTitle) {
+    super();
+    this.#isExtraFilmsList = isExtraFilmsList;
+    this.#filmsListTitle = filmsListTitle;
+  }
+
   get template() {
-    return createFilmsListElement();
+    return createFilmsListElement(this.#isExtraFilmsList, this.#filmsListTitle);
   }
 }
