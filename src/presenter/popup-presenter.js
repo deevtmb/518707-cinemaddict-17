@@ -40,9 +40,9 @@ export default class PopupPresenter {
     const prevPopupComponent = this.#popupComponent;
     this.#popupComponent = new PopupView(this.#film, this.#comments);
 
-    this.#popupComponent.setWatchlistClickHandler(this.#onWatchlistClick);
-    this.#popupComponent.setHistoryClickHandler(this.#onHistoryClick);
-    this.#popupComponent.setFavoriteClickHandler(this.#onFavoriteClick);
+    this.#popupComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
+    this.#popupComponent.setHistoryClickHandler(this.#handleHistoryClick);
+    this.#popupComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setClosePopupButtonHandler(this.#closePopup);
     this.#popupComponent.setDeleteCommentButtonHandler(this.#deleteComment);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -105,7 +105,7 @@ export default class PopupPresenter {
     }
   };
 
-  #onWatchlistClick = () => {
+  #handleWatchlistClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
     this.#changeData(
       UserAction.UPDATE_FILM,
@@ -114,7 +114,7 @@ export default class PopupPresenter {
     );
   };
 
-  #onHistoryClick = () => {
+  #handleHistoryClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
     this.#changeData(
       UserAction.UPDATE_FILM,
@@ -123,7 +123,7 @@ export default class PopupPresenter {
     );
   };
 
-  #onFavoriteClick = () => {
+  #handleFavoriteClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
     this.#changeData(
       UserAction.UPDATE_FILM,

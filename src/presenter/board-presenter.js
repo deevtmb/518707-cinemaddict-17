@@ -8,6 +8,7 @@ import FilmsListView from '../view/films-list-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import NoFilmsView from '../view/no-films-view.js';
 import ProfileView from '../view/profile-view.js';
+import FilmsTotalView from '../view/films-total-view.js';
 import FilmPresenter from './film-presenter.js';
 import PopupPresenter from './popup-presenter.js';
 
@@ -25,6 +26,7 @@ export default class BoardPresenter {
   #showMoreButtonComponent = null;
   #noFilmsComponent = null;
   #filmsComponent = new FilmsView();
+  #filmsTotalComponent = null;
 
   #isExtraFilmsList = true;
   #mainFilmsListComponent = new FilmsListView();
@@ -33,6 +35,7 @@ export default class BoardPresenter {
 
   #popupContainer = document.querySelector('body');
   #profileContainer = document.querySelector('.header');
+  #filmsTotalContainer = document.querySelector('.footer__statistics');
 
   #renderedFilmsCount = FILMS_PER_RENDER_AMOUNT;
   #currentSortType = SortType.DEFAULT;
@@ -77,6 +80,7 @@ export default class BoardPresenter {
     this.#renderProfile();
     this.#renderMainBoard();
     this.#renderExtraFilms();
+    this.#renderFilmsTotal();
   };
 
   #handleViewAction = (userAction, updateType, update) => {
@@ -131,6 +135,11 @@ export default class BoardPresenter {
     }
     this.#profileComponent = new ProfileView(this.films);
     render(this.#profileComponent, this.#profileContainer);
+  };
+
+  #renderFilmsTotal = () => {
+    this.#filmsTotalComponent = new FilmsTotalView(this.films);
+    render(this.#filmsTotalComponent, this.#filmsTotalContainer);
   };
 
   #updateFilmData = (film) => {

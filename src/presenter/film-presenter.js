@@ -21,9 +21,9 @@ export default class FilmPresenter {
 
     this.#filmCardComponent = new FilmCardView(this.#film);
     this.#filmCardComponent.setClickHandler(this.#popupCallback);
-    this.#filmCardComponent.setWatchlistClickHandler(this.#onWatchlistClick);
-    this.#filmCardComponent.setHistoryClickHandler(this.#onHistoryClick);
-    this.#filmCardComponent.setFavoriteClickHandler(this.#onFavoriteClick);
+    this.#filmCardComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
+    this.#filmCardComponent.setHistoryClickHandler(this.#handleHistoryClick);
+    this.#filmCardComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
     if (prevFilmCardComponent === null) {
       render(this.#filmCardComponent, this.#filmListContainer);
@@ -37,7 +37,7 @@ export default class FilmPresenter {
     remove(prevFilmCardComponent);
   };
 
-  #onWatchlistClick = () => {
+  #handleWatchlistClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
     this.#changeData(
       UserAction.UPDATE_FILM,
@@ -46,7 +46,7 @@ export default class FilmPresenter {
     );
   };
 
-  #onHistoryClick = () => {
+  #handleHistoryClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
     this.#changeData(
       UserAction.UPDATE_FILM,
@@ -55,7 +55,7 @@ export default class FilmPresenter {
     );
   };
 
-  #onFavoriteClick = () => {
+  #handleFavoriteClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
     this.#changeData(
       UserAction.UPDATE_FILM,
