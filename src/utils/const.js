@@ -41,4 +41,11 @@ const ExtraFilmTitle = {
   MOST_COMMENTED: 'Most commented'
 };
 
-export {SortType, FilterType, PopupState, DateFormat, UpdateType, UserAction, ExtraFilmTitle, EMOTIONS};
+const ApiMethod = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
+};
+
+export {SortType, FilterType, PopupState, DateFormat, UpdateType, UserAction, ExtraFilmTitle, ApiMethod, EMOTIONS};

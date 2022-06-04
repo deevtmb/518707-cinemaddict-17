@@ -92,7 +92,7 @@ export default class BoardPresenter {
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmsModel.updateFilm(updateType, update);
+        this.#commentsModel.deleteComment(updateType, update);
         break;
       case UserAction.ADD_COMMENT:
         this.#commentsModel.addComment(updateType, update);

@@ -65,12 +65,14 @@ export default class PopupPresenter {
 
   #deleteComment = (target) => {
     const index = [...target.closest('.film-details__comments-list').children].findIndex((elem) => elem === target.closest('.film-details__comment'));
-    this.#film.comments.splice(index, 1);
-    target.closest('.film-details__comment').remove();
     this.#changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
-      this.#film
+      {
+        film: this.#film,
+        comment: this.#comments[index],
+        index: index,
+      }
     );
   };
 
@@ -87,10 +89,7 @@ export default class PopupPresenter {
           {
             film: this.#film,
             comment: {
-              id: -1,
-              author: 'Author',
               comment: commentText.value,
-              date: new Date(),
               emotion: commentEmoji.value,
             }
           }

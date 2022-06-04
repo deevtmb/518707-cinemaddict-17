@@ -1,10 +1,6 @@
 import ApiService from '../framework/api-service.js';
 import {renameToSnakeCase} from '../utils/object-var-rename.js';
-
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-};
+import {ApiMethod} from '../utils/const.js';
 
 export default class FilmsApiService extends ApiService {
   get films() {
@@ -15,7 +11,7 @@ export default class FilmsApiService extends ApiService {
   updateFilm = async (film) => {
     const response = await this._load({
       url: `movies/${film.id}`,
-      method: Method.PUT,
+      method: ApiMethod.PUT,
       body: JSON.stringify(this.#adaptToServer(film)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
