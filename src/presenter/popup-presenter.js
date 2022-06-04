@@ -28,13 +28,14 @@ export default class PopupPresenter {
     return this.#filmId;
   }
 
-  init = (film) => {
+  init = async (film) => {
     if (this.#film) {
       this.#prevFilmId = this.#film.id;
     }
 
     this.#film = film;
     this.#filmId = film.id;
+    await this.#commentsModel.init(film);
     this.#comments = this.#commentsModel.comments;
 
     const prevPopupComponent = this.#popupComponent;

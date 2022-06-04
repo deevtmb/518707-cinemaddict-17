@@ -16,7 +16,9 @@
     "start": "webpack serve --mode development --open"
   },
   "dependencies": {
-    "dayjs": "^1.11.1",
+    "camelcase": "6.3.0",
+    "dayjs": "1.11.1",
+    "decamelize": "6.0.0",
     "he": "1.2.0"
   },
   "devDependencies": {
