@@ -2,6 +2,7 @@ import {render, remove, RenderPosition} from '../framework/render.js';
 import {sortFilmsByRating, sortFilmsByDate, sortFilmsByCommentsAmount} from '../utils/common.js';
 import {SortType, UpdateType, PopupState, UserAction, FilterType, ExtraFilmTitle} from '../utils/const.js';
 import {filter} from '../utils/filter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import SortView from '../view/sort-view.js';
 import FilmsView from '../view/films-view.js';
 import FilmsListView from '../view/films-list-view.js';
@@ -15,6 +16,11 @@ import PopupPresenter from './popup-presenter.js';
 
 const FILMS_PER_RENDER_AMOUNT = 5;
 const FILMS_LIST_EXTRA_AMOUNT = 2;
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -33,6 +39,7 @@ export default class BoardPresenter {
   #isExtraFilmsList = true;
   #isLoading = true;
   #allFilms = [];
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   #mainFilmsListComponent = new FilmsListView();
   #topRatedFilmsListComponent = new FilmsListView(this.#isExtraFilmsList, ExtraFilmTitle.TOP_RATED);
@@ -69,6 +76,10 @@ export default class BoardPresenter {
 
   get films () {
     this.#allFilms = this.#filmsModel.films;
+    if (this.#currentFilterType !== this.#filterModel.filter) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
+
     this.#currentFilterType = this.#filterModel.filter;
     const films = this.#filmsModel.films;
     const filteredFilms = filter[this.#currentFilterType](films);
@@ -86,16 +97,34 @@ export default class BoardPresenter {
     this.#renderMainBoard();
   };
 
-  #handleViewAction = (userAction, updateType, update) => {
+  #handleViewAction = async (userAction, updateType, update) => {
     switch (userAction) {
       case UserAction.UPDATE_FILM:
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#filmsModel.updateFilm(updateType, update.film);
+        } catch (err) {
+          update.presenter.setAbortingChange();
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmsModel.updateFilm(updateType, update);
+        this.#popupPresenter.setDeletingComment(update.comments);
+        try {
+          await this.#commentsModel.deleteComment(updateType, update);
+        } catch (err) {
+          this.#popupPresenter.setAbortingDelete(update.comments, update.index);
+        }
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentsModel.addComment(updateType, update);
+        this.#popupPresenter.setPostingComment();
+        this.#uiBlocker.block();
+        try {
+          await this.#commentsModel.addComment(updateType, update);
+          this.#uiBlocker.unblock();
+        } catch (err) {
+          this.#popupPresenter.setAbortingPost();
+          this.#uiBlocker.unblock();
+        }
+        break;
     }
   };
 
