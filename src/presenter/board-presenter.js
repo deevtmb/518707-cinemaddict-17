@@ -122,6 +122,7 @@ export default class BoardPresenter {
           this.#uiBlocker.unblock();
         } catch (err) {
           this.#popupPresenter.setAbortingPost();
+          this.#uiBlocker.unblock();
         }
         break;
     }
