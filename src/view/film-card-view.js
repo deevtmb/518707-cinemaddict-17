@@ -2,6 +2,9 @@ import AbstractView from '../framework/view/abstract-view.js';
 import {getFormatedRuntime, getDescriptionPreview, getFormatedDate} from '../utils/common.js';
 import {DateFormat} from '../utils/const.js';
 
+const SHAKE_CLASS_NAME = 'shake';
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const createFilmCardTemplate = (film) => {
   const {poster, title, totalRating, genre, runtime, release, description} = film.filmInfo;
   const comments = film.comments;
@@ -88,5 +91,13 @@ export default class FilmCardView extends AbstractView {
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
+  };
+
+  shakeElement = (element, callback) => {
+    element.classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      element.classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
   };
 }

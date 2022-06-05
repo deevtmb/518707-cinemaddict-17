@@ -34,9 +34,9 @@ export default class CommentsModel extends Observable {
   };
 
   deleteComment = async (updateType, update) => {
-    const {film, comment, index} = update;
+    const {film, comments, index} = update;
     try {
-      await this.#commentsApiService.deleteComment(comment);
+      await this.#commentsApiService.deleteComment(comments[index]);
       film.comments.splice(index, 1);
       this._notify(updateType, film);
     } catch(err) {
