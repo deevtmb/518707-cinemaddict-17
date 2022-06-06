@@ -61,6 +61,23 @@ export default class CommentsView extends AbstractStatefulView {
     return createPopupTemplate(this._state);
   }
 
+  shakeElement = (element, callback) => {
+    element.classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      element.classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiChangeHandler);
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setDeleteCommentButtonHandler(this._callback.deleteComment);
+  };
+
   setDeleteCommentButtonHandler = (callback) => {
     this._callback.deleteComment = callback;
     this.element.querySelector('.film-details__comments-list')
@@ -80,26 +97,9 @@ export default class CommentsView extends AbstractStatefulView {
       return;
     }
 
-    const commentEmoji = this.element.querySelector('.film-details__add-emoji-label img');
-    commentEmoji.src = evt.target.tagName === 'IMG' ? evt.target.src : evt.target.firstElementChild.src;
-    commentEmoji.alt = evt.target.tagName === 'IMG' ? evt.target.alt : evt.target.firstElementChild.alt;
-    commentEmoji.classList.remove('visually-hidden');
-  };
-
-  #setInnerHandlers = () => {
-    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiChangeHandler);
-  };
-
-  _restoreHandlers = () => {
-    this.#setInnerHandlers();
-    this.setDeleteCommentButtonHandler(this._callback.deleteComment);
-  };
-
-  shakeElement = (element, callback) => {
-    element.classList.add(SHAKE_CLASS_NAME);
-    setTimeout(() => {
-      element.classList.remove(SHAKE_CLASS_NAME);
-      callback?.();
-    }, SHAKE_ANIMATION_TIMEOUT);
+    const commentEmojiElement = this.element.querySelector('.film-details__add-emoji-label img');
+    commentEmojiElement.src = evt.target.tagName === 'IMG' ? evt.target.src : evt.target.firstElementChild.src;
+    commentEmojiElement.alt = evt.target.tagName === 'IMG' ? evt.target.alt : evt.target.firstElementChild.alt;
+    commentEmojiElement.classList.remove('visually-hidden');
   };
 }

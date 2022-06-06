@@ -50,6 +50,14 @@ export default class FilmCardView extends AbstractView {
     return createFilmCardTemplate(this.#film);
   }
 
+  shakeElement = (element, callback) => {
+    element.classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      element.classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  };
+
   setClickHandler = (callback) => {
     this._callback.click = callback;
     this.element.querySelector('.film-card__link').addEventListener('click', this.#clickHandler);
@@ -91,13 +99,5 @@ export default class FilmCardView extends AbstractView {
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
-  };
-
-  shakeElement = (element, callback) => {
-    element.classList.add(SHAKE_CLASS_NAME);
-    setTimeout(() => {
-      element.classList.remove(SHAKE_CLASS_NAME);
-      callback?.();
-    }, SHAKE_ANIMATION_TIMEOUT);
   };
 }

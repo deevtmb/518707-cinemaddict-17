@@ -37,6 +37,14 @@ export default class FilmPresenter {
     remove(prevFilmCardComponent);
   };
 
+  destroy = () => {
+    remove(this.#filmCardComponent);
+  };
+
+  setAbortingChange = () => {
+    this.#filmCardComponent.shakeElement(this.#filmCardComponent.element.querySelector('.film-card__controls'));
+  };
+
   #handleWatchlistClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
     this.#changeData(
@@ -71,14 +79,5 @@ export default class FilmPresenter {
         presenter: this,
       }
     );
-  };
-
-  destroy = () => {
-    remove(this.#filmCardComponent);
-  };
-
-  setAbortingChange = () => {
-    const elem = this.#filmCardComponent.element.querySelector('.film-card__controls');
-    this.#filmCardComponent.shakeElement(elem);
   };
 }

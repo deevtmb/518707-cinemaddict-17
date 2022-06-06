@@ -51,9 +51,9 @@ export default class PopupPresenter {
     this.#popupComponent.setHistoryClickHandler(this.#handleHistoryClick);
     this.#popupComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setClosePopupButtonHandler(this.#closePopup);
-    this.#commentsComponent.setDeleteCommentButtonHandler(this.#deleteComment);
+    this.#commentsComponent.setDeleteCommentButtonHandler(this.#handleDeleteComment);
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    document.addEventListener('keydown', this.#addComment);
+    document.addEventListener('keydown', this.#handleAddComment);
 
     if (this.#state === PopupState.HIDDEN) {
       this.#popupContainer.classList.add('hide-overflow');
@@ -71,7 +71,42 @@ export default class PopupPresenter {
     }
   };
 
-  #deleteComment = (target) => {
+  setDeletingComment = (comments) => {
+    this.#commentsComponent.updateElement(comments);
+  };
+
+  setPostingComment = () => {
+    document.removeEventListener('keydown', this.#handleAddComment);
+  };
+
+  setAbortingDelete = (comments, index) => {
+    const resetCommentsState = () => {
+      comments[index].isDeleting = false;
+      this.#commentsComponent.updateElement(comments);
+    };
+    this.#commentsComponent.shakeElement(this.#commentsComponent.element.querySelectorAll('.film-details__comment')[index], resetCommentsState);
+  };
+
+  setAbortingChange = () => {
+    this.#popupComponent.shakeElement(this.#popupComponent.element.querySelector('.film-details__controls'));
+  };
+
+  setAbortingPost = () => {
+    document.addEventListener('keydown', this.#handleAddComment);
+    this.#popupComponent.shakeElement(this.#popupComponent.element.querySelector('.film-details__new-comment'));
+  };
+
+  #closePopup = () => {
+    if (this.#state !== PopupState.HIDDEN) {
+      this.#popupContainer.classList.remove('hide-overflow');
+      remove(this.#popupComponent);
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+      document.removeEventListener('keydown', this.#handleAddComment);
+      this.#state = PopupState.HIDDEN;
+    }
+  };
+
+  #handleDeleteComment = (target) => {
     const index = [...target.closest('.film-details__comments-list').children].findIndex((elem) => elem === target.closest('.film-details__comment'));
     this.#comments[index].isDeleting = true;
     this.#changeData(
@@ -85,32 +120,34 @@ export default class PopupPresenter {
     );
   };
 
-  #addComment = (evt) => {
-    const commentText = this.#popupComponent.element.querySelector('textarea');
-    const commentEmoji = this.#popupComponent.element.querySelector('.film-details__emoji-item:checked');
+  #handleAddComment = (evt) => {
+    const commentTextElement = this.#popupComponent.element.querySelector('textarea');
+    const commentEmojiElement = this.#popupComponent.element.querySelector('.film-details__emoji-item:checked');
     if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
       evt.preventDefault();
 
-      if (commentText.value && commentEmoji) {
+      if (commentTextElement.value && commentEmojiElement) {
         this.#changeData(
           UserAction.ADD_COMMENT,
           UpdateType.PATCH,
           {
             film: this.#film,
             comment: {
-              comment: commentText.value,
-              emotion: commentEmoji.value,
+              comment: commentTextElement.value,
+              emotion: commentEmojiElement.value,
             }
           }
         );
+        return;
       }
-    }
-  };
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this.#closePopup();
+      if (!commentTextElement.value) {
+        this.#popupComponent.shakeElement(commentTextElement);
+      }
+
+      if (!commentEmojiElement) {
+        this.#popupComponent.shakeElement(this.#popupComponent.element.querySelector('.film-details__emoji-list'));
+      }
     }
   };
 
@@ -150,42 +187,10 @@ export default class PopupPresenter {
     );
   };
 
-  #closePopup = () => {
-    if (this.#state !== PopupState.HIDDEN) {
-      this.#popupContainer.classList.remove('hide-overflow');
-      remove(this.#popupComponent);
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
-      this.#state = PopupState.HIDDEN;
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#closePopup();
     }
-  };
-
-  setDeletingComment = (comments) => {
-    this.#commentsComponent.updateElement(comments);
-  };
-
-  setPostingComment = () => {
-    document.removeEventListener('keydown', this.#addComment);
-  };
-
-  setAbortingDelete = (comments, index) => {
-    const resetCommentsState = () => {
-      comments[index].isDeleting = false;
-      this.#commentsComponent.updateElement(comments);
-    };
-
-    const elem = this.#commentsComponent.element.querySelectorAll('.film-details__comment')[index];
-    this.#commentsComponent.shakeElement(elem, resetCommentsState);
-  };
-
-  setAbortingChange = () => {
-    const elem = this.#popupComponent.element.querySelector('.film-details__controls');
-    this.#popupComponent.shakeElement(elem);
-  };
-
-  setAbortingPost = () => {
-    document.addEventListener('keydown', this.#addComment);
-
-    const elem = this.#popupComponent.element.querySelector('.film-details__new-comment');
-    this.#popupComponent.shakeElement(elem);
   };
 }

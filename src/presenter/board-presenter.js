@@ -38,7 +38,6 @@ export default class BoardPresenter {
 
   #isExtraFilmsList = true;
   #isLoading = true;
-  #allFilms = [];
   #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   #mainFilmsListComponent = new FilmsListView();
@@ -75,7 +74,6 @@ export default class BoardPresenter {
   }
 
   get films () {
-    this.#allFilms = this.#filmsModel.films;
     if (this.#currentFilterType !== this.#filterModel.filter) {
       this.#currentSortType = SortType.DEFAULT;
     }
@@ -188,9 +186,7 @@ export default class BoardPresenter {
     if (this.#popupPresenter.state === PopupState.OPEN && film.id === this.#popupPresenter.filmId) {
       this.#popupPresenter.init(film);
     }
-    if (this.#topRatedFilmPresenter.get(film.id) || this.#topCommentedFilmPresenter.get(film.id)){
-      this.#renderExtraFilms();
-    }
+    this.#renderExtraFilms();
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -259,8 +255,8 @@ export default class BoardPresenter {
   };
 
   #renderExtraFilms = () => {
-    const topRatedFilms = [...this.#allFilms].sort(sortFilmsByRating);
-    const topCommentedFilms = [...this.#allFilms].sort(sortFilmsByCommentsAmount);
+    const topRatedFilms = [...this.#filmsModel.films].sort(sortFilmsByRating);
+    const topCommentedFilms = [...this.#filmsModel.films].sort(sortFilmsByCommentsAmount);
 
     if (topRatedFilms.some((film) => film.filmInfo.totalRating)){
       this.#clearFilmPresenter(this.#topRatedFilmPresenter);

@@ -1,6 +1,5 @@
 import ApiService from '../framework/api-service.js';
 import {ApiMethod} from '../utils/const.js';
-import {renameToCamelCase} from '../utils/object-var-rename.js';
 
 export default class CommentsApiService extends ApiService {
   getComments = (film) => this._load({url: `comments/${film.id}`})
@@ -13,11 +12,11 @@ export default class CommentsApiService extends ApiService {
       body: JSON.stringify(comment),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
-
     const parsedResponse = await ApiService.parseResponse(response);
-    const convertedResponse = this.#adaptToClient(parsedResponse.movie);
+    const updatedComments = parsedResponse.comments.map((it) => it.id);
+    film.comments = updatedComments;
 
-    return convertedResponse;
+    return film;
   };
 
   deleteComment = async (comment) => {
@@ -27,16 +26,5 @@ export default class CommentsApiService extends ApiService {
     });
 
     return response;
-  };
-
-  #adaptToClient = (film) => {
-    const adaptedFilm = {...film};
-
-    renameToCamelCase(adaptedFilm);
-    renameToCamelCase(adaptedFilm.filmInfo);
-    renameToCamelCase(adaptedFilm.filmInfo.release);
-    renameToCamelCase(adaptedFilm.userDetails);
-
-    return adaptedFilm;
   };
 }
