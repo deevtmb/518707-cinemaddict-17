@@ -105,7 +105,7 @@ const createPopupTemplate = (film) => {
 
 export default class PopupView extends AbstractView {
   #film = null;
-  #scrolTopValue = 0;
+  #scrollTopValue = 0;
 
   constructor (film) {
     super();
@@ -118,7 +118,7 @@ export default class PopupView extends AbstractView {
   }
 
   get scrollTopValue () {
-    return this.#scrolTopValue;
+    return this.#scrollTopValue;
   }
 
   shakeElement = (element, callback) => {
@@ -174,7 +174,7 @@ export default class PopupView extends AbstractView {
   };
 
   #scrollPopupHandler = () => {
-    this.#scrolTopValue = +this.element.scrollTop.toFixed();
+    this.#scrollTopValue = +this.element.scrollTop.toFixed();
   };
 
   #setInnerHandlers = () => {

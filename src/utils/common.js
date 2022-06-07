@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
 
 const DESCRIPTION_PREVIEW_LENGTH = 140;
+const MINUTES_IN_HOUR = 60;
 
 const getFormatedRuntime = (runtime) => {
-  const runtimeHours = Math.floor(runtime / 60);
-  const runtimeMinutes = runtime % 60;
+  const runtimeHours = Math.floor(runtime / MINUTES_IN_HOUR);
+  const runtimeMinutes = runtime % MINUTES_IN_HOUR;
 
   if (runtimeHours) {
     return `${runtimeHours}h ${runtimeMinutes}m`;
