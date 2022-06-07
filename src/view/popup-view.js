@@ -105,7 +105,6 @@ const createPopupTemplate = (film) => {
 
 export default class PopupView extends AbstractView {
   #film = null;
-  #comments = [];
   #scrolTopValue = 0;
 
   constructor (film) {
@@ -121,6 +120,14 @@ export default class PopupView extends AbstractView {
   get scrollTopValue () {
     return this.#scrolTopValue;
   }
+
+  shakeElement = (element, callback) => {
+    element.classList.add(SHAKE_CLASS_NAME);
+    setTimeout(() => {
+      element.classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  };
 
   setClosePopupButtonHandler = (callback) => {
     this._callback.click = callback;
@@ -172,13 +179,5 @@ export default class PopupView extends AbstractView {
 
   #setInnerHandlers = () => {
     this.element.addEventListener('scroll', this.#scrollPopupHandler);
-  };
-
-  shakeElement = (element, callback) => {
-    element.classList.add(SHAKE_CLASS_NAME);
-    setTimeout(() => {
-      element.classList.remove(SHAKE_CLASS_NAME);
-      callback?.();
-    }, SHAKE_ANIMATION_TIMEOUT);
   };
 }

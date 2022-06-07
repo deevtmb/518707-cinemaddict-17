@@ -6,7 +6,7 @@ import CommentsModel from './model/comments-model.js';
 import FilmsApiService from './api-services/films-api-service.js';
 import CommentsApiService from './api-services/comments-api-service.js';
 
-const AUTHORIZATION = 'Basic aut0r1z4t1on1';
+const AUTHORIZATION = 'Basic 4ut0r1z4t1on';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
 const siteMainElement = document.querySelector('.main');
